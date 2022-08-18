@@ -1,2 +1,6 @@
 # CyberDefenders-WU
-CyberDefenders challenge writeup
+
+CyberDefenders writeups made by Robertl and ZarKyo :
+
+- DetectLog4j
+- HawkEye
