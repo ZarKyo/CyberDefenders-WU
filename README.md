@@ -6,3 +6,4 @@ CyberDefenders writeups made by Robertl and ZarKyo :
 - HawkEye
 - Team Spy
 - l337 S4auce
+- Seized
