@@ -39,7 +39,7 @@ On utilise `grep` pour trouver la version de l'OS :
 grep -a "Linux release" dump.mem 
 ```
 
-**Réponse : 7.7.1908 **
+**Réponse : 7.7.1908**
 
 #### 2 - There is a command containing a strange message in the bash history. Will you be able to read it?
 
@@ -57,7 +57,7 @@ On obtient le résultat suivant qui semble être la commande bizarre :
 
 En traduisant le b64 on a le flag : 
 
-**Réponse : shkCTF{l3ts_st4rt_th3_1nv3st_75cc55476f3dfe1629ac60} **
+**Réponse : shkCTF{l3ts_st4rt_th3_1nv3st_75cc55476f3dfe1629ac60}**
 
 #### 3 - What is the PID of the suspicious process?
 
@@ -69,7 +69,7 @@ vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_pslist
 
 On voit le PID 2854 qui est un ncat
 
-**Réponse : 2854 **
+**Réponse : 2854**
 
 #### 4 - The attacker downloaded a backdoor to gain persistence. What is the hidden message in this backdoor?
 
@@ -79,7 +79,7 @@ On va sur le github depuis lequel l'attaquant à téléchargé ses fichiers.
 
 Dans un des fichiers on voit un message caché (dans snapshot.py).
 
-**Réponse : shkCTF{th4t_w4s_4_dumb_b4ckd00r_86033c19e3f39315c00dca} **
+**Réponse : shkCTF{th4t_w4s_4_dumb_b4ckd00r_86033c19e3f39315c00dca}**
 
 #### 5 - What are the IP address and the port used by the attacker?
 
@@ -91,7 +91,7 @@ vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_netscan
 
 On regarde l'addr ip qui ecoute le port 12345. Car la backdoor a ouvert une connection sur ce port.
 
-**Réponse : 192.168.49.1:12345 **
+**Réponse : 192.168.49.1:12345**
 
 #### 6 - What is the first command that the attacker executed?
 
@@ -103,7 +103,7 @@ vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_psaux
 
 Après le ncat on voit la commande : 
 
-**Réponse : python -c import pty; pty.spawn("/bin/bash") **
+**Réponse : python -c import pty; pty.spawn("/bin/bash")**
 
 #### 7 - After changing the user password, we found that the attacker still has access. Can you find out how?
 
@@ -119,7 +119,7 @@ vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_dump_map --dump-dir
 strings *.vma |grep -i '.ssh'
 ```
 
-**Réponse : shkCTF{rc.l0c4l_1s_funny_be2472cfaeed467ec9cab5b5a38e5fa0} **
+**Réponse : shkCTF{rc.l0c4l_1s_funny_be2472cfaeed467ec9cab5b5a38e5fa0}**
 
 #### 8 - What is the name of the rootkit that the attacker used?
 
@@ -133,7 +133,7 @@ volatility -f dump.mem --profile=LinuxCentOS-7_7_1908-3_10_0-1062x64 linux_check
 
 La sortie de cette commande montre qu'il y a eu un hook provoqué par le rootkit :
 
-**Réponse : sysemptyrect **
+**Réponse : sysemptyrect**
 
 
 #### 9 - The rootkit uses crc65 encryption. What is the key?
@@ -146,7 +146,7 @@ grep -a -i "sysemptyrect" dump.mem
 
 On a alors la clé qui s'affiche
 
-**Réponse : 1337tibbartibbar **
+**Réponse : 1337tibbartibbar**
 
 
 
