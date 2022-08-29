@@ -32,7 +32,7 @@ Tools:
 
 #### 1 - What is the computer hostname?
 
-Avec avec **AccessData FTK Imager**, ouvrir le disque et aller à `ROOT > System32 > config` et exporter la clé **SYSTEM**. Avec **Registry Explorer** importer la clé et regarder `ROOT > ControleSet > Control > ComputerName`.
+Avec avec **AccessData FTK Imager**, ouvrir le disque et aller à `ROOT > System32 > config` et exporter la ruche **SYSTEM**. Avec **Registry Explorer** importer la ruche et regarder `ROOT > ControleSet > Control > ComputerName`.
 
 **Réponse : VCW65**
 
@@ -72,9 +72,9 @@ Dans l'event viewer : EventId 4720 & recherche : myoussef
 
 #### 7 - What is the user mhasan password hint?
 
-Avec avec **AccessData FTK Imager**, ouvrir le disque et aller à `ROOT > System32 > config` et exporter la clé **SAM**. Avec **Registry Explorer** importer la clé et regarder `ROOT > SAM > > Domains > Account > Users > mhasan`.
+Avec avec **AccessData FTK Imager**, ouvrir le disque et aller à `ROOT > System32 > config` et exporter la ruche **SAM**. Avec **Registry Explorer** importer la ruche et regarder `ROOT > SAM > > Domains > Account > Users > mhasan`.
 
-On regarde le `last write timestamp` du user mhasan. O, compare avec les autres clés avec des noms moins intuitif `ROOT > SAM > Domains > Account > Users > 00000404 > UserPasswordHint` : https://www.linkedin.com/in/0xmohamedhasan/
+On regarde le `last write timestamp` du user mhasan. O, compare avec les autres ruches avec des noms moins intuitif `ROOT > SAM > Domains > Account > Users > 00000404 > UserPasswordHint` : https://www.linkedin.com/in/0xmohamedhasan/
 
 **Réponse : https://www.linkedin.com/in/0xmohamedhasan/**
 
@@ -186,7 +186,7 @@ static final String CONTAINER_JNDI_RESOURCE_PATH_PREFIX = "java:comp/env/";
 
 #### 21 - What is the executable used by the attacker to gain persistence?
 
-Avec avec **AccessData FTK Imager**, ouvrir le disque et extraire la clé de regsitre `NTUSER.DAT` de `Administrator.WIN-B633EO9K91M`
+Avec avec **AccessData FTK Imager**, ouvrir le disque et extraire le fichier `NTUSER.DAT` de `Administrator.WIN-B633EO9K91M`
 
 Avec **Registry Explorer** : `ROOT > SOFTWARE > Microsoft > Windows > CurrentVersion > RunOnce` 
 
