@@ -8,3 +8,7 @@ CyberDefenders writeups made by Robertl and ZarKyo :
 - l337 S4auce
 - Seized
 - MrRobot
+- Brave
+- DumpMe
+- WireDive
+- Ulysses
