@@ -2,18 +2,12 @@
 
 ## Info 
 
-Category : 	Digital Forensics
-
-SHA1SUM :	70f1bafca632f7518cb0a0ee126246b040247b37
-
-Published :	May 30, 2021
-
-Author :	Champlain College
-
-Size :		1.2 GB
-
-Tags :		Volatility DFIR Windows Memory 
-
+- Category : Digital Forensics
+- SHA1SUM :	70f1bafca632f7518cb0a0ee126246b040247b37
+- Published :	May 30, 2021
+- Author : Champlain College
+- Size : 1.2 GB
+- Tags : Volatility DFIR Windows Memory 
 
 Scenario :
 

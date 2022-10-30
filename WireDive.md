@@ -2,12 +2,12 @@
 
 ## Info 
 
-Category : 	Digital Forensics
-SHA1SUM :	a2aa9ad4831057e17df585bdac84efc05ec0413d
-Published :	Oct. 7, 2020
-Authors :	Johannes Weber and Champlain College
-Size :		26M
-Tags :		Wireshark PCAP SMB Network 	
+- Category : Digital Forensics
+- SHA1SUM :	a2aa9ad4831057e17df585bdac84efc05ec0413d
+- Published : Oct. 7, 2020
+- Authors :	Johannes Weber and Champlain College
+- Size : 26M
+- Tags : Wireshark PCAP SMB Network 
 
 Uncompress the challenge (pass: cyberdefenders.org)
 

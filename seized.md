@@ -2,18 +2,12 @@
 
 ## Info
 
-Category :	Digital Forensics
-
-SHA1SUM	:	a2c209bb3c221bc70f3418e079e2a22db3cebc53
-
-Published :	May 28, 2022
-
-Authors	:	2phi and Nofix
-
-Size :		162 MB
-
-Tags :		LINUX MEMORY CENTOS ROOTKIT
-
+- Category : Digital Forensics
+- SHA1SUM :	a2c209bb3c221bc70f3418e079e2a22db3cebc53
+- Published : May 28, 2022
+- Authors : 2phi and Nofix
+- Size : 162 MB
+- Tags : LINUX MEMORY CENTOS ROOTKIT
 	
 Unzip the challenge (pass: cyberdefenders.org), investigate this case, and answer the provided questions.
 

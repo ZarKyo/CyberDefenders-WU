@@ -2,18 +2,12 @@
 
 ## Info
 
-Category : 	Digital Forensics
-
-SHA1SUM :	b53238c60a72d6056dacff51ab041c9688553d07
-
-Published :	Oct. 19, 2020
-
-Author :	The Honeynet Project
-
-Size :		429M
-
-Tags :		Volatility Linux Memory Disk 
-
+- Category : Digital Forensics
+- SHA1SUM :	b53238c60a72d6056dacff51ab041c9688553d07
+- Published : Oct. 19, 2020
+- Author :	The Honeynet Project
+- Size : 429M
+- Tags : Volatility Linux Memory Disk 
 
 Scenario :
 

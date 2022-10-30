@@ -2,15 +2,14 @@
 
 ## Info
  
-Category : Digital Forensics, Malware Analysis 
+- Category : Digital Forensics, Malware Analysis 
+- SHA1SUM :	bd7239a7c1e33f4d616242fe892888befc9fashed 
+- Published : March 3, 2022 
+- Authors : Brad Duncan and Manuel GRegal 
+- Size : 1.3 MB 
+- Tags : PCAP WireShark Network BRIM 
 
-SHA1SUM :	    bd7239a7c1e33f4d616242fe892888befc9fashed </br>
-Published :   March 3, 2022 </br>
-Authors :     Brad Duncan and Manuel GRegal </br>
-Size :	       1.3 MB </br>
-Tags :	       PCAP WireShark Network BRIM </br>
-
-Uncompress the challenge (pass: cyberdefenders.org) </br>
+Uncompress the challenge (pass: cyberdefenders.org) 
 
 Scenario:
 

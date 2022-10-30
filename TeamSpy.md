@@ -2,21 +2,14 @@
 
 ## Info
 
-Category :	Digital Forensics
-
-SHA1SUM : 	1bc677daf51be254c8bfb9085f7375bbf1ee8e3b
-
-Published : 	June 4, 2022
-
-Author : 	Wyatt Roersma
-
-Size :		1.4G
-
-Tags :		GrrCon Memory WIndows TeamViewer
-
+- Category : Digital Forensics
+- SHA1SUM : 1bc677daf51be254c8bfb9085f7375bbf1ee8e3b
+- Published : June 4, 2022
+- Author : Wyatt Roersma
+- Size : 1.4G
+- Tags : GrrCon Memory WIndows TeamViewer
 
 Uncompress the challenge (pass: cyberdefenders.org)
-
 
 Scenario:
 

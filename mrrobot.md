@@ -2,18 +2,12 @@
 
 ## Info
 
-Category : 	Digital Forensics
-
-SHA1SUM	:	b8dab80336c37688f276bfbfac0ac1681398a30d
-
-Published :	May 18, 2022
-
-Author :	Wyatt Roersma
-
-Size :		1.1 GB
-
-Tags :		PHISHINGWINDOWSMEMORYRAT
-
+- Category : Digital Forensics
+- SHA1SUM :	b8dab80336c37688f276bfbfac0ac1681398a30d
+- Published : May 18, 2022
+- Author : Wyatt Roersma
+- Size : 1.1 GB
+- Tags : PHISHINGWINDOWSMEMORYRAT
 
 Scenario :
 

@@ -2,13 +2,12 @@
 
 ## Info
 
-Category : Digital Forensics 
-
-SHA1SUM :	6556e7d46e89bf2ea68e05cf101920e2de071a22 </br>
-Published :	Jan. 15, 2022 </br>
-Author :	CyberDefenders </br>
-Size : 	    	2.8 GB </br>
-Tags :	    	Windows Disk ransomware log4shell </br> 	
+- Category : Digital Forensics 
+- SHA1SUM :	6556e7d46e89bf2ea68e05cf101920e2de071a22 
+- Published : Jan. 15, 2022 
+- Author : CyberDefenders 
+- Size : 2.8 GB 
+- Tags : Windows Disk ransomware log4shell  	
 
 Uncompress the challenge (pass: cyberdefenders.org)
 

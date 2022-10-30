@@ -2,18 +2,14 @@
 
 ## Info 
 
-Category : Digital Forensics
-
-SHA1SUM :
-fa02a505471aeb89172f89cb27dd4e2eea14bb9e </br>
-Published :
-June 20, 2021 </br>
-Author : 
-DFIRScience </br>
-Size :	1.2 GB </br>
-Tags :	Volatility Memory Brave Winows </br>
+- Category : Digital Forensics
+- SHA1SUM : fa02a505471aeb89172f89cb27dd4e2eea14bb9e
+- Published : June 20, 2021
+- Author : DFIRScience
+- Size : 1.2 GB
+- Tags : Volatility Memory Brave Winows
  	
-Unzip the challenge (pass: cyberdefenders.org) </br>
+Unzip the challenge (pass: cyberdefenders.org)
 
 Scenario : 
 
