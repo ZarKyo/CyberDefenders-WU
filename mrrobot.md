@@ -9,50 +9,50 @@
 - Size : 1.1 GB
 - Tags : PHISHINGWINDOWSMEMORYRAT
 
-Scenario :
+### Scenario
 
 An employee reported that his machine started to act strangely after receiving a suspicious email for a security update. The incident response team captured a couple of memory dumps from the suspected machines for further inspection. Analyze the dumps and help the IR team figure out what happened!
 
-Tools :
+### Tools
 
 - Volatility2
 - Volatility3
 - Rstudio
 
+---
 
-## Question
+## Questions
 
+### 1 - Machine:Target1 / What email address tricked the front desk employee into installing a security update?
 
-#### 1 - Machine:Target1 / What email address tricked the front desk employee into installing a security update?
-
-On fait un string sur l'image mémoire pour voir si on arrive à voir des addresses mails.
+We make a string on the memory image to see if we manage to see email adresses.
 
 ```
 strings Target1.vmss | egrep '([[:alnum:]_.-]{1,64}+@[[:alnum:]_.-]{2,255}+?\.[[:alpha:].]{2,4})'
 ```
 
-**Réponse :  th3wh1t3r0s3@gmail.com**
+**Answer :  th3wh1t3r0s3@gmail.com**
 
-#### 2 - What is the filename that was delivered in the email?
+### 2 - What is the filename that was delivered in the email?
 
-De même mais en regardant autour de l'addresse mail vu précédemment voir le mail qui a été reçu
+Similarly but looking around the previously seen email address see the email that was received
 
 ```
 strings Target1-1dd8701f.vmss | grep -i TH3WH1T3R0S3@GMAIL.COM -a5
 ```
 
-**Réponse : AnyConnectInstaller.exe**
+**Answer : AnyConnectInstaller.exe**
 
 
-#### 3 - What is the name of the rat's family used by the attacker?
+### 3 - What is the name of the rat's family used by the attacker?
 
-On récupère la liste des fichiers chargés en mémoire
+We retrieve the list of files loaded in memory
 
 ```
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 filescan > filescan.txt
 ```
 
-On récupère l'addresse mémoire du malware pour le dump juste après :
+We retrieve the memory address of the malware for the dump just after :
 
 ```
 cat filescan.txt | grep AnyConnectInstaller.exe
@@ -62,92 +62,89 @@ cat filescan.txt | grep AnyConnectInstaller.exe
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 dumpfiles -Q 0x000000003ed57968 -D output/
 ```
 
-On met le hash sur virustotal
+We put the hash on virustotal
 
-**Réponse : XTREMERAT**
+**Answer : XTREMERAT**
 
-#### 4 - The malware appears to be leveraging process injection. What is the PID of the process that is injected?
+### 4 - The malware appears to be leveraging process injection. What is the PID of the process that is injected?
 
-En mettant le hash sur VirusTotal, on voit dans la catégorie **Process Injected** qu'il s'injecte dans IE Explorer.
+By putting the hash on VirusTotal, we see in the **Process Injected** category that it is injected into IE Explorer.
 
 ```
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 pslit
 ```
 
-Pour lister les process et leurs PID
+To list the processes and their PIDs
 
-**Réponse : 2996**
+**Answer : 2996**
 
-#### 5 - What is the unique value the malware is using to maintain persistence after reboot?
+### 5 - What is the unique value the malware is using to maintain persistence after reboot?
 
-VirusTotal donne la valeur de la clé run utilisée par le malware
+VirusTotal gives the value of the run key used by the malware
 
-**Réponse : MrRobot**
+**Answer : MrRobot**
 
+### 6 - Malware often uses a unique value or name to ensure that only one copy runs on the system. What is the unique name the malware is using?
 
-#### 6 - Malware often uses a unique value or name to ensure that only one copy runs on the system. What is the unique name the malware is using?
+Mutants are used to know when a machine is infected or not
 
-Les mutants sont utilisés pour savoir lorsqu'une machinee est infectée ou non
-
-On peut lister les **handles** du process infecté et voir si il y a des mutants 
+We can list the **handles** of the infected process and see if there are mutants
 
 ```
 vol.py -f Target1.dmp --profile=Win7SP1x86_23418 handles -p 2996 | grep -i mutant
 ```
 
-**Réponse : fsociety0.dat**
+**Answer : fsociety0.dat**
 
-#### 7 - It appears that a notorious hacker compromised this box before our current attackers. Name the movie he or she is from.
+### 7 - It appears that a notorious hacker compromised this box before our current attackers. Name the movie he or she is from.
 
-Question assez particulière mais en regardant la liste des utilisateurs présents sur la machine on peut trouver le nom du film :
-
+Rather particular question but by looking at the list of users present on the machine we can find the name of the film:
 
 ```
 vol.py -f Target1.dmp --profile=Win7SP1x86_23418 cachedump
 ```
-Un des utilisateurs s'appelle **zerocool** comme dans le film :
 
-**Réponse : hackers**
+One of the users is called **zerocool** like in the movie :
 
-#### 8 - Machine:Target1 / What is the NTLM password hash for the administrator account?
+**Answer : hackers**
 
-On utilise le plugin `hashdump` pour récupèrer des hash de l'image mémoire
+### 8 - Machine:Target1 / What is the NTLM password hash for the administrator account?
+
+We use the `hashdump` plugin to retrieve hashes from the memory dump
 
 ```
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 hashdump
 ```
 
-**Réponse : 79402b7671c317877b8b954b3311fa82**
+**Answer : 79402b7671c317877b8b954b3311fa82**
 
+### 9 - The attackers appear to have moved over some tools to the compromised front desk host. How many tools did the attacker move?
 
-#### 9 - The attackers appear to have moved over some tools to the compromised front desk host. How many tools did the attacker move?
-
-On utilise le plugin `consoles` de volatility pour voir l'historique des commandes passées
-
-```
-vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 consoles
-```
-
-On peut voir la liste des exécutables suspect dans le dossier **Tmp**.
-
-**Réponse : 3**
-
-
-#### 10 - What is the password for the front desk local administrator account?
-
-Pareil
+We use the plugin `consoles` of volatility to see the history of orders placed
 
 ```
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 consoles
 ```
 
-l'outil wce a été utilisé et montre le mdp.
+You can see the list of suspicious executables in the **Tmp** folder.
 
-**Réponse : flagadmin@1234**
+**Answer : 3**
 
-#### 11 -  What is the std create data timestamp for the nbtscan.exe tool?
+### 10 - What is the password for the front desk local administrator account?
 
-On récupère la MFT de l'image mémoire qui est la liste des fichiers avec leurs dates de modif+création
+Same
+
+```
+vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 consoles
+```
+
+the wce tool was used and shows the mdp.
+
+**Answer : flagadmin@1234**
+
+### 11 -  What is the std create data timestamp for the nbtscan.exe tool?
+
+We recover the MFT of the memory image which is the list of files with their dates of modification + creation
 
 ```
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 mftparser > mft.txt
@@ -157,11 +154,11 @@ vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 mftparser > mft.txt
 cat mft.txt | grep nbtscan.exe
 ```
 
-**Réponse : 2015-10-09 10:45:12 UTC**
+**Answer : 2015-10-09 10:45:12 UTC**
 
-#### 12 - The attackers appear to have stored the output from the nbtscan.exe tool in a text file on a disk called nbs.txt. What is the IP address of the first machine in that file?
+### 12 - The attackers appear to have stored the output from the nbtscan.exe tool in a text file on a disk called nbs.txt. What is the IP address of the first machine in that file?
 
-On récupère le fichier à l'aide de volatility :
+We retrieve the file using volatility :
 
 ```
 cat filescan.txt | grep nbs.txt
@@ -173,40 +170,39 @@ vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 dumpfiles -Q 0x000000
 cat output/file.None.0x83eda598.dat
 ```
 
-**Réponse : 10.1.1.2**
+**Answer : 10.1.1.2**
 
+### 13 - What is the full IP address and the port was the attacker's malware using?
 
-#### 13 - What is the full IP address and the port was the attacker's malware using?
-
-On liste les connexions faites par la machine
+We list the connections made by the machine
 
 ```
 vol.py -f Target1-1dd8701f.vmss --profile=Win7SP1x86_23418 netscan
 ```
 
-**Réponse : 180.76.254.120:22**
+**Answer : 180.76.254.120:22**
 
-#### 14 - It appears the attacker also installed legit remote administration software. What is the name of the running process?
+### 14 - It appears the attacker also installed legit remote administration software. What is the name of the running process?
 
-En listant les différences process à l'aide du plugin `pslist`, on voit un logiciel bien connu
+By listing the different processes using the `pslist` plugin, we see a well-known software
 
-**Réponse : TeamViewer.exe**
+**Answer : TeamViewer.exe**
 
-#### 15 - It appears the attackers also used a built-in remote access method. What IP address did they connect to?
+### 15 - It appears the attackers also used a built-in remote access method. What IP address did they connect to?
 
-En réutilisant le plugin `netscan` on peut voir les connections
+By reusing the `netscan` plugin we can see the connections
 
-**Réponse : 10.1.1.21** 
+**Answer : 10.1.1.21** 
 
-#### 16 - Machine:Target2 / It appears the attacker moved latterly from the front desk machine to the security admins (Gideon) machine and dumped the passwords. What is Gideon's password?
+### 16 - Machine:Target2 / It appears the attacker moved latterly from the front desk machine to the security admins (Gideon) machine and dumped the passwords. What is Gideon's password?
 
-En utilisant le plugin `consoles` on voit l'historique :
+Using the `consoles` plugin we see the history:
 
 ```
 vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 consoles
 ```
 
-l'utilitaire wce a écrit sa sortie sur le fichier `w.tmp`. On le dump
+the wce utility wrote its output to the `w.tmp` file. We dump it
 
 ```
 vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 filescan > filescan.txt
@@ -218,34 +214,34 @@ vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 dumpfiles -Q 0x000000
 cat output/file.None.0x85a35da0.dat
 ```
 
-Et on récupère le mot de passe
+And we recover the password
 
-**Réponse : t76fRJhS**
+**Answer : t76fRJhS**
 
-#### 17 - Once the attacker gained access to "Gideon," they pivoted to the AllSafeCyberSec domain controller to steal files. It appears they were successful. What password did they use?
+### 17 - Once the attacker gained access to "Gideon," they pivoted to the AllSafeCyberSec domain controller to steal files. It appears they were successful. What password did they use?
 
-On regarde l'historique des commandes et on voit le mot de passe utilisé
-
-```
-vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 consoles
-```
-
-**Réponse : 123qwe!@#** 
-
-#### 18 - What was the name of the RAR file created by the attackers?
-
-Même chose on regarde l'historique des commandes :
+We look at the command history and we see the password used
 
 ```
 vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 consoles
 ```
 
-**Réponse : crownjewlez.rar**
+**Answer : 123qwe!@#** 
 
+### 18 - What was the name of the RAR file created by the attackers?
 
-#### 19 - How many files did the attacker add to the RAR archive?
+Same thing, look at the command history :
 
-On regarde le pid fu process qui s'est connecté au DC (conhost)
+```
+vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 consoles
+```
+
+**Answer : crownjewlez.rar**
+
+### 19 - How many files did the attacker add to the RAR archive?
+
+We look at the pid of the process that connected to the DC (conhost)
+
 ```
 vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 pslist (on regarde le pid du process qui s'est co au dc conhost)
 ```
@@ -259,39 +255,35 @@ vol.py -f target2-6186fe9f.vmss --profile=Win7SP1x86_23418 memdump -p 3048 -D ou
 strings -e l output/3048.dmp | grep -i crownjewlez.rar -A10 -B10
 ```
 
-**Réponse : 3**
+**Answer : 3**
 
+### 20 - The attacker appears to have created a scheduled task on Gideon's machine. What is the name of the file associated with the scheduled task?
 
-
-#### 20 - The attacker appears to have created a scheduled task on Gideon's machine. What is the name of the file associated with the scheduled task?
-
-On liste les scheduled tasks 
+We list the scheduled tasks
 
 ```
 cat filescan.txt | grep -i “System32\\\tasks\\\\”
 ```
 
-Une des taches semblent suspectes : **At1**
+One of the spots looks suspicious: **At1**
 
-On la dump et on cat le fichier.
+We dump it and cat the file.
 
-**Réponse : 1.dat**
+**Answer : 1.bat**
 
+### 22 - Machine:POS / What is the malware CNC's server?
 
-#### 22 - Machine:POS / What is the malware CNC's server?
-
-On regarde les connexions de la machine ers l'extérieur :
+We look at the connections of the machine to the outside :
 
 ```
 vol.py -f POS-01-c4e8f786.vmss --profile=Win7SP1x86_23418 netscan
 ```
 
-**Réponse : 54.84.237.92**
+**Answer : 54.84.237.92**
 
+### 23 - What is the common name of the malware used to infect the POS system?
 
-#### 23 - What is the common name of the malware used to infect the POS system?
-
-On utilise le plugin `malfind` de volatility pour voir si il trouve quelque chose :
+We use the volatility plugin `malfind` to see if it finds anything :
 
 ```
 vol.py -f POS-01-c4e8f786.vmss --profile=Win7SP1x86_23418 malfind -p 3208 -D output/
@@ -299,37 +291,26 @@ vol.py -f POS-01-c4e8f786.vmss --profile=Win7SP1x86_23418 malfind -p 3208 -D out
 
 On récupère le malware du processus infecté puis VirusTotal
 
-**Réponse : Dexter**
+**Answer : Dexter**
 
+### 23 - In the POS malware whitelist. What application was specific to Allsafecybersec?
 
-#### 23 - In the POS malware whitelist. What application was specific to Allsafecybersec?
-
-On dump les dll utilisées à l'addresse mémoire du processu malveillant
+We dump the dlls used at the memory address of the malicious process
 
 ```
 vol.py -f POS-01-c4e8f786.vmss --profile=Win7SP1x86 dlldump -p 3208 --base=0x50000 -D ./
 ```
 
-On regarde ses chaines de caractères.
+We look at its character strings.
 
 ```
 strings module.3208.3fd324d8.50000.dll | grep -i exe"  
 ```
 
-**Réponse : allsafe_protector.exe**
+**Answer : allsafe_protector.exe**
 
-#### 24 - What is the name of the file the malware was initially launched from?
+### 24 - What is the name of the file the malware was initially launched from?
 
-En utilisant le plugin `iehistory` on peut voir quel executable répond à la question
+Using the `iehistory` plugin we can see which executable answers the question
 
-**Réponse : allsafe_update.exe**
-
-
-
-
-
-
-
-
-
-
+**Answer : allsafe_update.exe**

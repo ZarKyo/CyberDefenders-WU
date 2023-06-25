@@ -2,19 +2,19 @@
 
 ## Info 
 
-- Category : Digital Forensics
+- Category : 	Digital Forensics
 - SHA1SUM :	a2aa9ad4831057e17df585bdac84efc05ec0413d
-- Published : Oct. 7, 2020
+- Published :	Oct. 7, 2020
 - Authors :	Johannes Weber and Champlain College
-- Size : 26M
-- Tags : Wireshark PCAP SMB Network 
+- Size :		26M
+- Tags :		Wireshark PCAP SMB Network 		
 
 Uncompress the challenge (pass: cyberdefenders.org)
 
-Scenario :
+### Scenario
 
 WireDive is a combo traffic analysis exercise that contains various traces to help you understand how different protocols look on the wire.
-Challenge Files:
+Challenge Files :
 
 - dhcp.pcapng
 - dns.pcapng
@@ -24,110 +24,113 @@ Challenge Files:
 - shell.pcapng 
 - smb.pcapng
 
-Tools:
+### Tools
 
 - BrimSecurity
 - WireShark
 
-## 	Question
+---
 
-## 1 - File: dhcp.pcapng - What IP address is requested by the client ?
+## Questions
 
-recherche : `dhcp`
+### 1 - File: dhcp.pcapng - What IP address is requested by the client ?
 
-Regarder la requête `DHCP Request > Requested IP Addresse (192.168.2.244)`
+search: `dhcp`
 
-**Réponse : 192.168.2.244**
+Look at the query `DHCP Request > Requested IP Address (192.168.2.244)`
 
-## 2 - File: dhcp.pcapng - What is the transaction ID for the DHCP release ?
+**Answer: 192.168.2.244**
 
-recherche : `dhcp`
+### 2 - File: dhcp.pcapng - What is the transaction ID for the DHCP release?
 
-Regarder la requête `DHCP release > Transaction ID`
+search: `dhcp`
 
-**Réponse : 0x9f8fa557**
+Look at the `DHCP release > Transaction ID` request
 
-## 3 - File: dhcp.pcapng - What is the MAC address of the client ?
+**Answer: 0x9f8fa557**
 
-recherche : `dhcp`
+### 3 - File: dhcp.pcapng - What is the MAC address of the client?
 
-Regarder la requête `DHCP request > Client MAC address`
+search: `dhcp`
 
-**Réponse : 00:0c:29:82:f5:94**
+Look at the request `DHCP request > Client MAC address`
 
-## 4 - File dns.pcapng - What is the response for the lookup for flag.fruitinc.xyz ?
+**Answer: 00:0c:29:82:f5:94**
 
-**Réponse : ACOOLDNSFLAG**
+### 4 - File dns.pcapng - What is the response for the lookup for flag.fruitinc.xyz?
 
-## 5 - File: dns.pcapng - Which root server responds to the query ? Hostname.
+**Answer: ACOOLDNSFLAG**
 
-recherche : `DNS`
+### 5 - File: dns.pcapng - Which root server responds to the query? Hostname.
 
-On regarde la première query DNS, la réponse contient une liste de DNS Root. La seconde query a pour destination l'IP du DNS Root.
+search: `DNS`
 
-Il suffit de faire un nslookup sur 192.203.230.10
+We look at the first DNS query, the response contains a list of DNS Root. The second query is for the DNS Root IP.
+
+Just do an nslookup on 192.203.230.10
 
 ```shell
-
+nslookup 192.203.230.10               
+10.230.203.192.in-addr.arpa     name = e.root-servers.net.
 ```
 
-**Réponse : e.root-servers.net**
+**Answer: e.root-servers.net**
 
-## 6 - File smb.pcapng - What is the path of the file that is opened ?
+### 6 - File smb.pcapng - What is the path of the file that is opened?
 
-recherche : `smb2.create.action`
+search: `smb2.create.action`
 
-On trouve des requêtes **Create Response File : ...**
+There are requests **Create Response File: ...**
 
-**Réponse : HelloWorld\TradeSecrets.txt**
+**Answer: HelloWorld\TradeSecrets.txt**
 
-## 7 - File smb.pcapng - What is the hex status code when the user SAMBA\jtomato logs in ?
+### 7 - File smb.pcapng - What is the hex status code when the user SAMBA\jtomato logs in?
 
-recherche : `smb2 && ntlmssp.auth.username == jtomato || tcp.stream`
+search: `smb2 && ntlmssp.auth.username == jtomato || tcp.stream`
 
-On remarque la requête `Session Setup Request, NTLMSSP_AUTH, User: SAMBA\jtomato` ainsi que sa réponse `Session Setup Response, Error: STATUS_LOGON_FAILURE`. On trouve le status code dans la réponse à la requête `SMB2 > SMB2 Header > NT Status: STATUS_LOGON_FAILURE (0xc000006d)`
+We notice the request `Session Setup Request, NTLMSSP_AUTH, User: SAMBA\jtomato` as well as its response `Session Setup Response, Error: STATUS_LOGON_FAILURE`. The status code can be found in the response to the request `SMB2 > SMB2 Header > NT Status: STATUS_LOGON_FAILURE (0xc000006d)`
 
-**Réponse : 0xc000006d**
+**Response: 0xc000006d**
 
-## 8 - File smb.pcapng - What is the tree that is being browsed ?
+### 8 - File smb.pcapng - What is the tree that is being browsed?
 
-recherche : `smb2.tree`
+search: `smb2.tree`
 
-On remarque la requête `Tree Connect Request Tree: \\192.168.2.10\public`
+We notice the request `Tree Connect Request Tree: \\192.168.2.10\public`
 
-**Réponse : \\192.168.2.10\public**
+**Answer: \\192.168.2.10\public**
 
-## 9 - File smb.pcapng - What is the flag in the file ?
+### 9 - File smb.pcapng - What is the flag in the file?
 
-`Fichier > exporter objet > smb` : exporter **HelloWorldTradeSecrets.txt**
+`File > export object > smb`: export **HelloWorldTradeSecrets.txt**
 
-CTRL + F, flag : flag<OneSuperDuperSecret>
+CTRL+F, flag: flag<OneSuperDuperSecret>
 
-**Réponse : OneSuperDuperSecret**
+**Answer: OneSuperDuperSecret**
 
-## 10 - File shell.pcapng - What port is the shell listening on ?
+### 10 - File shell.pcapng - What port is the shell listening on?
 
-recherche : `tcp`
+search: `tcp`
 
-On regarde le port de destination du premier paquet
+We look at the destination port of the first packet
 
-**Réponse : 4444**
+**Answer: 4444**
 
-## 11 - File shell.pcapng - What is the port for the second shell ?
+### 11 - File shell.pcapng - What is the port for the second shell ?
 
-recherche : `tcp && ip.src == 192.168.2.5 && ip.dst == 192.168.2.244 && tcp.port != 4444`
+search: `tcp && ip.src == 192.168.2.5 && ip.dst == 192.168.2.244 && tcp.port != 4444`
 
-On regarde le port de destination du premier paquet
+We look at the destination port of the first packet
 
-**Réponse : 9999**
+**Answer: 9999**
 
-## 12 - File shell.pcapng - What version of netcat is installed ?
+### 12 - File shell.pcapng - What version of netcat is installed?
 
-recherche : `tcp`
+search: `tcp`
 
-On regarde la première requête et `Suivre > flux TCP`.
+We look at the first request and `Follow > TCP stream`.
 
-L'attaquant install netcat sur la machine victime, on peut voir la version installé
+The attacker install netcat on the victim machine, we can see the installed version
 
 ```shell
 jtomato@ns01:~$ echo "*umR@Q%4V&RC" | sudo -S apt update
@@ -145,13 +148,13 @@ Unpacking netcat (1.10-41.1) ...
 Setting up netcat (1.10-41.1) ...
 ```
 
-**Réponse : 1.10-41.1**
+**Answer: 1.10-41.1**
 
-## 13 - File shell.pcapng - What file is added to the second shell
+### 13 - File shell.pcapng - What file is added to the second shell
 
-recherche : `tcp.stream eq 0`
+search: `tcp.stream eq 0`
 
-On regarde la première requête et `Suivre > flux TCP`.
+We look at the first request and `Follow > TCP stream`.
 
 ```shell
 jtomato@ns01:~$ echo "*umR@Q%4V&RC" | sudo -S nc -nvlp 9999 < /etc/passwd
@@ -160,26 +163,26 @@ Listening on [0.0.0.0] (family 0, port 9999)
 Connection from 192.168.2.244 34972 received!
 ```
 
-**Réponse : /etc/passwd**
+**Answer: /etc/passwd**
 
-## 14 - File shell.pcapng - What password is used to elevate the shell ?
+### 14 - File shell.pcapng - What password is used to elevate the shell?
 
-recherche : `tcp.stream eq 0`
+search: `tcp.stream eq 0`
 
-On regarde la première requête et `Suivre > flux TCP`.
+We look at the first request and `Follow > TCP stream`.
 
 ```shell
 jtomato@ns01:~$ echo "*umR@Q%4V&RC" | sudo -S apt update
 echo "*umR@Q%4V&RC" | sudo -S apt update
 ```
 
-**Réponse : *umR@Q%4V&RC**
+**Answer: *umR@Q%4V&RC**
 
-## 15 - File shell.pcapng - What is the OS version of the target system ?
+### 15 - File shell.pcapng - What is the OS version of the target system?
 
-recherche : `tcp.stream eq 0`
+search: `tcp.stream eq 0`
 
-On regarde la première requête et `Suivre > flux TCP`.
+We look at the first request and `Follow > TCP stream`.
 
 ```shell
 jtomato@ns01:~$ echo "*umR@Q%4V&RC" | sudo -S apt update
@@ -193,13 +196,13 @@ Hit:3 http://us.archive.ubuntu.com/ubuntu bionic-backports InRelease
 Hit:4 http://us.archive.ubuntu.com/ubuntu bionic-security InRelease
 ```
 
-**Réponse : bionic**
+**Answer: bionic**
 
-## 16 - File shell.pcapng - How many users are on the target system ?
+### 16 - File shell.pcapng - How many users are on the target system?
 
-recherche : `tcp`
+search: `tcp`
 
-Dans le dernier flux (`tcp.stream eq 6`), on voit le contenu du `/etc/passwd`
+In the last stream (`tcp.stream eq 6`), we see the content of `/etc/passwd`
 
 ```shell
 root:x:0:0:root:/root:/bin/bash
@@ -235,136 +238,136 @@ jtomato:x:1000:1000:Jim Tomamto:/home/jtomato:/bin/bash
 bind:x:111:113::/var/cache/bind:/usr/sbin/nologin
 ```
 
-**Réponse : 31**
+**Answer : 31**
 
-## 17 - File network.pcapng - What is the IPv6 NTP server IP ?
+### 17 - File network.pcapng - What is the IPv6 NTP server IP ?
 
-recherche : `ntp`
+search: `ntp`
 
-Il y a seulement 1 couple de paquet en IPv6. L'IPv6 de destination est celle du serveur NTP
+There is only 1 packet pair in IPv6. The destination IPv6 is that of the NTP server
 
-**Réponse : 2003:51:6012:110::dcf7:123**
+**Answer: 2003:51:6012:110::dcf7:123**
 
-## 18 - File network.pcapng - What is the first IP address that is requested by the DHCP client ?
+### 18 - File network.pcapng - What is the first IP address that is requested by the DHCP client?
 
-recherche : `dhcp`
+search: `dhcp`
 
-Regarder la première requête **DHCP Request** : `DHCP Request > Requested IP Addresse (192.168.20.11)`
+Look at the first **DHCP Request**: `DHCP Request > Requested IP Address (192.168.20.11)`
 
-**Réponse : 192.168.20.11**
+**Answer: 192.168.20.11**
 
-## 19 - File network.pcapng - What is the first authoritative name server for the domain that is being queried ?
+### 19 - File network.pcapng - What is the first authoritative name server for the domain that is being queried?
 
-recherche : `dns`
+search: `dns`
 
-On regarde la première requête `DNS	152	Standard query response 0xb4ca A blog.webernetz.net A 5.35.226.136 NS ns2.hans.hosteurope.de NS ns1.hans.hosteurope.de`
+We look at the first query `DNS 152 Standard query response 0xb4ca A blog.webernetz.net A 5.35.226.136 NS ns2.hans.hosteurope.de NS ns1.hans.hosteurope.de`
 
-**Réponse : ns1.hans.hosteurope.de**
+**Answer: ns1.hans.hosteurope.de**
 
-## 20 - File network.pcapng - What is the number of the first VLAN to have a topology change occur ?
+### 20 - File network.pcapng - What is the number of the first VLAN to have a topology change occur?
 
-recherche : `stp.flags.tc == 1` (=`Spanning Tree Protocol > BPDU flags > 1 = Topology Change: yes`)
+search: `stp.flags.tc == 1` (=`Spanning Tree Protocol > BPDU flags > 1 = Topology Change: yes`)
 
-On regarde la première requête `Spanning Tree Protocol > Originating VLAN (PVID): 20`
+We look at the first request `Spanning Tree Protocol > Originating VLAN (PVID): 20`
 
-**Réponse : 20**
+**Answer: 20**
 
-## 21 - File network.pcapng - What is the port for CDP for CCNP-LAB-S2 ?
+### 21 - File network.pcapng - What is the port for CDP for CCNP-LAB-S2?
 
-CDP =  Cisco Discovery Protocol
+CDP = Cisco Discovery Protocol
 
-recherche : `cdp`
+search: `cdp`
 
-On regarde la requête `Device ID: CCNP-LAB-S2.webernetz.net  Port ID: GigabitEthernet0/2`
+We look at the request `Device ID: CCNP-LAB-S2.webernetz.net Port ID: GigabitEthernet0/2`
 
 `Cisco Discovery Protocol > Port ID`
 
-**Réponse : GigabitEthernet0/2**
+**Answer : GigabitEthernet0/2**
 
-## 22 - File network.pcapng - What is the MAC address for the root bridge for VLAN 60 ?
+### 22 - File network.pcapng - What is the MAC address for the root bridge for VLAN 60 ?
 
-recherche : `stp.pvst.origvlan == 60`
+search: `stp.pvst.origvlan == 60`
 
-On regarde dans n'importe quelle paquet `Spanning Tree Protocol > Root Identifier > Root Bridge System ID`
+We look in any package `Spanning Tree Protocol > Root Identifier > Root Bridge System ID`
 
-**Réponse : 00:21:1b:ae:31:80**
+**Answer: 00:21:1b:ae:31:80**
 
-## 23 - File network.pcapng - What is the IOS version running on CCNP-LAB-S2 ?
+### 23 - File network.pcapng - What is the IOS version running on CCNP-LAB-S2?
 
-recherche : `cdp.deviceid == CCNP-LAB-S2.webernetz.net`
+search: `cdp.deviceid == CCNP-LAB-S2.webernetz.net`
 
-On regarde dans n'importe quelle paquet `Cisco Discovery Protocol > Software Version > Software version`
+We look in any package `Cisco Discovery Protocol > Software Version > Software version`
 
-**Réponse : 12.1(22)EA14**
+**Answer: 12.1(22)EA14**
 
-## 24 - File network.pcapng - What is the virtual IP address used for hsrp group 121 ?
+### 24 - File network.pcapng - What is the virtual IP address used for hsrp group 121?
 
-recherche : `hsrp`
+search: `hsrp`
 
-Regarder dans les requêtes `Cisco Hot Standby Router Protocol > Group State TLV > Group`. Lorsque le paquet correspond regarde le champ `Cisco Hot Standby Router Protocol > Group State TLV > Virtual IP Address`
+Look in the `Cisco Hot Standby Router Protocol > Group State TLV > Group` queries. When the packet matches look at the field `Cisco Hot Standby Router Protocol > Group State TLV > Virtual IP Address`
 
-**Réponse : 192.168.121.1**
+**Answer: 192.168.121.1**
 
-## 27 - File network.pcapng - How many router solicitations were sent ?
+### 27 - File network.pcapng - How many router solicitations were sent?
 
-recherche : `icmpv6.type == 133`
+search: `icmpv6.type == 133`
 
-On compte le nombre de paquet
+Count the number of packets
 
-**Réponse : 3**
+**Answer: 3**
 
-## 28 - File network.pcapng - What is the management address of CCNP-LAB-S2 ?
+### 28 - File network.pcapng - What is the management address of CCNP-LAB-S2?
 
-recherche : `cdp.deviceid == CCNP-LAB-S2.webernetz.net`
+search: `cdp.deviceid == CCNP-LAB-S2.webernetz.net`
 
-On regarde dans n'importe quelle paquet `Cisco Discovery Protocol > Management Addresses > IP address`
+We look in any packet `Cisco Discovery Protocol > Management Addresses > IP address`
 
-**Réponse : 192.168.121.20**
+**Answer: 192.168.121.20**
 
-## 29 - File network.pcapng - What is the interface being reported on in the first snmp query ?
+### 29 - File network.pcapng - What is the interface being reported on in the first snmp query?
 
-recherche : `snmp`
+search: `snmp`
 
-On regarde la première requête "get-response" `get-response 1.3.6.1.2.1...`. Puis `Simple Network Management Protocol > data: get-response > variable-bindings > 1.3.6.1.2.1.31.1.1.1.1.2: "Fa0/1"`
+We look at the first request "get-response" `get-response 1.3.6.1.2.1...`. Then `Simple Network Management Protocol > data: get-response > variable-bindings > 1.3.6.1.2.1.31.1.1.1.1.2: "Fa0/1"`
 
-**Réponse : FA0/1**
+**Answer: FA0/1**
 
-## 30 - File network.pcapng - When was the NVRAM config last updated ?
+### 30 - File network.pcapng - When was the NVRAM config last updated?
 
-`Editer > Trouver un paquet` : Taille du paquet et chaine de caractères **nvram**
+`Edit > Find a package`: Package size and **nvram** string
 
-On arrive sur la bonne requête `Suivre > flux UDP`
+We arrive on the right request `Follow > UDP stream`
 
 `! NVRAM config last updated at 21:02:36 UTC Fri Mar 3 2017 by weberjoh`
 
-**Réponse : 21:02:36 03/03/2017**
+**Answer: 21:02:36 03/03/2017**
 
-## 31 - File network.pcapng - What is the ip of the radius server ?
+### 31 - File network.pcapng - What is the ip of the radius server?
 
-`Editer > Trouver un paquet` : Taille du paquet et chaine de caractères **radius**
+`Edit > Find a package`: Package size and string **radius**
 
-On arrive sur la bonne requête `Suivre > flux UDP`
+We arrive on the right request `Follow > UDP stream`
 
 ```shell
 radius server blubb
  address ipv6 2001:DB8::1812 auth-port 1812 acct-port 1813
 ```
 
-**Réponse : 2001:DB8::1812**
+**Answer: 2001:DB8::1812**
 
 ---
 
-Pour la suite des analyses, il faut déchiffer le flux HTTPS avec le ficher le fichier **secret_sauce.txt** SSL/TLS secrets log file, generated by NSS fournis.
+For further analyses, the HTTPS stream must be decrypted with the file **secret_sauce.txt** SSL/TLS secrets log file, generated by NSS provided.
 
-Dans Wireshark `Editer > Preferences > Protocols > TLS > (Pre)-Master-Secret log filename`
+In Wireshark `Edit > Preferences > Protocols > TLS > (Pre)-Master-Secret log filename`
 
 ---
 
-## 32 - File https.pcapng - What has been added to web interaction with web01.fruitinc.xyz ?
+### 32 - File https.pcapng - What has been added to web interaction with web01.fruitinc.xyz ?
 
-recherche : `http.host == "web01.fruitinc.xyz"`
+search: `http.host == "web01.fruitinc.xyz"`
 
-`Suivre > flux HTTP`
+`Follow > HTTP stream`
 
 ```
 HTTP/1.1 200 OK
@@ -373,24 +376,24 @@ Server: Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips
 Last-Modified: Fri, 17 Apr 2020 18:30:55 GMT
 ETag: "41-5a380bff28e46"
 Accept-Ranges: bytes
-Content-Length: 65
+Content Length: 65
 flag: y2*Lg4cHe@Ps
 Keep-Alive: timeout=5, max=100
-Connection: Keep-Alive
+Connection: Keep Alive
 Content-Type: text/html; charset=UTF-8
 ```
 
 **flag: y2*Lg4cHe@Ps**
 
-**Réponse : y2*Lg4cHe@Ps**
+**Answer: y2*Lg4cHe@Ps**
 
-## 33 - File https.pcapng - What is the name of the photo that is viewed in slack ?
+### 33 - File https.pcapng - What is the name of the photo that is viewed in slack?
 
-recherche : `http`
+search: `http`
 
-`Editer > Trouver un paquet` : Taille du paquet et chaine de caractères **slack**
+`Edit > Find a package`: Package size and string **slack**
 
-`Suivre > flux HTTP`
+`Follow > HTTP stream`
 
 ```
 GET /files-tmb/TTL7QHDUJ-F011PDVK8TD-115062e5c0/get_a_new_phone_today__720.jpg HTTP/1.1
@@ -403,11 +406,11 @@ Connection: keep-alive
 Cookie: b=.9lmcvj9h0pwwksrwoopvfs2no; x=9lmcvj9h0pwwksrwoopvfs2no.1587148414; d=aYHLfpRRIdIGmbVSXd414fYil7oTWOkgjQIhLCnRVinnHnBo0fZd0ltopMbyUaYNj0MRqyF9BS4ZxLDUZ92xXXw5GclrJbFFPv3BIYDlErvB2NQ7MayhMGSj6hlG1pVeRS9BgZ4hl2fiwoFuAhO3w4fVngGL2LZ2jcaZ7FQC4%2FnzjaTO9A6KPoY9; d-s=1587148431; lc=1587148431
 ```
 
-**Réponse : get_a_new_phone_today__720.jpg**
+**Answer: get_a_new_phone_today__720.jpg**
 
-## 34 - File https.pcapng - What is the username and password to login to 192.168.2.1 ? Format: 'username:password' without quotes.
+### 34 - File https.pcapng - What is the username and password to login to 192.168.2.1? Format: 'username:password' without quotes.
 
-recherche : `ip.dst == 192.168.2.1 and urlencoded-form`
+search: `ip.dst == 192.168.2.1 and urlencoded-form`
 
 ```
 HTML Form URL Encoded: application/x-www-form-urlencoded
@@ -423,28 +426,28 @@ HTML Form URL Encoded: application/x-www-form-urlencoded
         Value: Sign In
 ```
 
-**Réponse : admin:Ac5R4D9iyqD5bSh&**
+**Answer: admin:Ac5R4D9iyqD5bSh&**
 
-## 35 - File https.pcapng - What is the certStatus for the certificate with a serial number of 07752cebe5222fcf5c7d2038984c5198 ?
+### 35 - File https.pcapng - What is the certStatus for the certificate with a serial number of 07752cebe5222fcf5c7d2038984c5198?
 
-`Editer > Trouver un paquet` : Taille du paquet et chaine de caractères **07752cebe5222fcf5c7d2038984c5198**. Regarder le **certStatus**
+`Edit > Find a package`: Package size and string **07752cebe5222fcf5c7d2038984c5198**. Look at the **certStatus**
 
-**Réponse : good**
+**Answer: good**
 
-## 36 - File https.pcapng - What is the email of someone who needs to change their password ?
+### 36 - File https.pcapng - What is the email of someone who needs to change their password?
 
-**Réponse : jim.tomato@fruitinc.xyz**
+**Answer: jim.tomato@fruitinc.xyz**
 
-## 37 - File https.pcapng - A service is assigned to an interface. What is the interface, and what is the service ? Format: interface_name:service_name
+### 37 - File https.pcapng - A service is assigned to an interface. What is the interface, and what is the service? Format: interface_name:service_name
 
-recherche : `http2 && ip.dst_host == 192.168.2.1`
+search: `http2 && ip.dst_host == 192.168.2.1`
 
-Le paquet `POST /services_ntpd.php, WINDOW_UPDATE[45]`
+The `POST /services_ntpd.php, WINDOW_UPDATE[45]` package
 
-On a le service et pour l'interface, on va chercher dans le pasuet suivant `HyperText Transfer Protocol 2 > MIME Multipart Media Encampsulation > Encapsulated Multipart Media > Data`
+We have the service and for the interface, we will look in the following step `HyperText Transfer Protocol 2 > MIME Multipart Media Encampsulation > Encapsulated Multipart Media > Data`
 
 **lan = 6c616e**
 
-(Peut être en hexadecimal)
+(May be in hexadecimal)
 
-**Réponse : lan:ntp**
+**Answer: lan:ntp**

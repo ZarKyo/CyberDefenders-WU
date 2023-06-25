@@ -8,102 +8,104 @@
 - Authors : 2phi and Nofix
 - Size : 162 MB
 - Tags : LINUX MEMORY CENTOS ROOTKIT
-	
+
 Unzip the challenge (pass: cyberdefenders.org), investigate this case, and answer the provided questions.
 
 Use the latest version of Volatility, place the attached Volatility profile "Centos7.3.10.1062.zip" in the following path volatility/volatility/plugins/overlays/linux.
 
-Scenario :
+### Scenario
 
 Using Volatility, utilize your memory analysis skills to Investigate the provided Linux memory snapshots and figure out attack details.
 
-Tools:
+### Tools
 
 - Volatility
 - CyberChef
 - grep
 
-## Question
+---
 
-#### 1 - What is the CentOS version installed on the machine?
+## Questions
 
-On utilise `grep` pour trouver la version de l'OS :
+### 1 - What is the CentOS version installed on the machine?
 
-```
-grep -a "Linux release" dump.mem 
-```
-
-**Réponse : 7.7.1908**
-
-#### 2 - There is a command containing a strange message in the bash history. Will you be able to read it?
-
-On lance `volatility` en utilisant le profile Linux donné avec le challenge
+We use `grep` to find the OS version:
 
 ```
-vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_bash 
+grep -a "Linux release" dump.mem
 ```
 
-On obtient le résultat suivant qui semble être la commande bizarre :
+**Answer: 7.7.1908**
 
-```    
-2622 bash                 2020-05-07 14:56:17 UTC+0000   echo "c2hrQ1RGe2wzdHNfc3Q0cnRfdGgzXzFudjNzdF83NWNjNTU0NzZmM2RmZTE2MjlhYzYwfQo=" > y0ush0uldr34dth1s.txt
+### 2 - There is a command containing a strange message in the bash history. Will you be able to read it?
+
+We run `volatility` using the Linux profile given with the challenge
+
+```
+vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_bash
 ```
 
-En traduisant le b64 on a le flag : 
+We get the following result which seems to be the weird command:
 
-**Réponse : shkCTF{l3ts_st4rt_th3_1nv3st_75cc55476f3dfe1629ac60}**
+```
+2622 bash 2020-05-07 14:56:17 UTC+0000 echo "c2hrQ1RGe2wzdHNfc3Q0cnRfdGgzXzFudjNzdF83NWNjNTU0NzZmM2RmZTE2MjlhYzYwfQo=" > y0ush0uldr34dth1s.txt
+```
 
-#### 3 - What is the PID of the suspicious process?
+By translating the b64 we have the flag:
 
-On lance `volatility` en utilisant le profile Linux donné avec le challenge
+**Answer: shkCTF{l3ts_st4rt_th3_1nv3st_75cc55476f3dfe1629ac60}**
+
+### 3 - What is the PID of the suspicious process?
+
+We run `volatility` using the Linux profile given with the challenge
 
 ```
 vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_pslist
 ```
 
-On voit le PID 2854 qui est un ncat
+We see the PID 2854 which is an ncat
 
-**Réponse : 2854**
+**Answer: 2854**
 
-#### 4 - The attacker downloaded a backdoor to gain persistence. What is the hidden message in this backdoor?
+### 4 - The attacker downloaded a backdoor to gain persistence. What is the hidden message in this backdoor?
 
-Avec le plugin linux_bash on voit ce qu'elles sont les commandes passées, donc ce qu'il a pu téléchargé. 
+With the linux_bash plugin we see what the commands are, so what he was able to download.
 
-On va sur le github depuis lequel l'attaquant à téléchargé ses fichiers.
+We go to the github from which the attacker downloaded his files.
 
-Dans un des fichiers on voit un message caché (dans snapshot.py).
+In one of the files we see a hidden message (in snapshot.py).
 
-**Réponse : shkCTF{th4t_w4s_4_dumb_b4ckd00r_86033c19e3f39315c00dca}**
+**Answer: shkCTF{th4t_w4s_4_dumb_b4ckd00r_86033c19e3f39315c00dca}**
 
-#### 5 - What are the IP address and the port used by the attacker?
+### 5 - What are the IP address and the port used by the attacker?
 
-On lance `volatility` en utilisant le profile Linux donné avec le challenge. Et le plugin `netscan`
+We run `volatility` using the Linux profile given with the challenge. And the `netscan` plugin
 
 ```
 vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_netscan
 ```
 
-On regarde l'addr ip qui ecoute le port 12345. Car la backdoor a ouvert une connection sur ce port.
+We look at the addr ip which listens to port 12345. Because the backdoor has opened a connection on this port.
 
-**Réponse : 192.168.49.1:12345**
+**Answer: 192.168.49.1:12345**
 
-#### 6 - What is the first command that the attacker executed?
+### 6 - What is the first command that the attacker executed?
 
-On analyse les commandes exécutées et les processus associés.
+The commands executed and the associated processes are analyzed.
 
 ```
 vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_psaux
 ```
 
-Après le ncat on voit la commande : 
+After the ncat we see the command:
 
-**Réponse : python -c import pty; pty.spawn("/bin/bash")**
+**Answer: python -c import pty; pty.spawn("/bin/bash")**
 
-#### 7 - After changing the user password, we found that the attacker still has access. Can you find out how?
+### 7 - After changing the user password, we found that the attacker still has access. Can you find out how?
 
-**rc.local** est un fichier permettant de lancer des actions au démarrage. 
+**rc.local** is a file used to launch actions at startup.
 
-On récup le pid de l'action de modif du fichier rc.local. Il suffit alors de le dump pour l'analyser
+We retrieve the pid of the modification action of the rc.local file. Then just dump it to analyze it
 
 ```
 vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_dump_map --dump-dir output/ -p 3196
@@ -113,35 +115,31 @@ vol.py -f dump.mem --profile=LinuxCentos7_3_10_1062x64 linux_dump_map --dump-dir
 strings *.vma |grep -i '.ssh'
 ```
 
-**Réponse : shkCTF{rc.l0c4l_1s_funny_be2472cfaeed467ec9cab5b5a38e5fa0}**
+**Answer: shkCTF{rc.l0c4l_1s_funny_be2472cfaeed467ec9cab5b5a38e5fa0}**
 
-#### 8 - What is the name of the rootkit that the attacker used?
+### 8 - What is the name of the rootkit that the attacker used?
 
-Un rootkit la plupart du temps tente de `hook` les appels systèmes pour les modifier, pour ainsi escalder ses privilèges.
+A rootkit most of the time tries to `hook` the system calls to modify them, in order to escalate its privileges.
 
-On utilise le plugin de volatility permettant de voir les appels systèmes et voir si il y a eu un `hook`
+We use the volatility plugin to see the system calls and see if there has been a `hook`
 
 ```
 volatility -f dump.mem --profile=LinuxCentOS-7_7_1908-3_10_0-1062x64 linux_check_syscall | grep -i hook
 ```
 
-La sortie de cette commande montre qu'il y a eu un hook provoqué par le rootkit :
+The output of this command shows that there was a hook caused by the rootkit:
 
-**Réponse : sysemptyrect**
+**Answer: sysemptyrect**
 
 
-#### 9 - The rootkit uses crc65 encryption. What is the key?
+### 9 - The rootkit uses crc65 encryption. What is the key?
 
-Pour cette question on peut simplement grep le nom du rootkit dans la mémoire :
+For this question one can simply grep the name of the rootkit into memory:
 
 ```
 grep -a -i "sysemptyrect" dump.mem
 ```
 
-On a alors la clé qui s'affiche
+We then have the key that is displayed
 
-**Réponse : 1337tibbartibbar**
-
-
-
-
+**Answer: 1337tibbartibbar**

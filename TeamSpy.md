@@ -11,11 +11,11 @@
 
 Uncompress the challenge (pass: cyberdefenders.org)
 
-Scenario:
+### Scenario
 
 An employee reported that his machine started to act strangely after receiving a suspicious email with a document file. The incident response team captured a couple of memory dumps from the suspected machines for further inspection. Analyze the dumps and help the IR team figure out what happened!
 
-Tools:
+### Tools
 
 - Volatilty 2.6
 - OSTviewer
@@ -23,43 +23,44 @@ Tools:
 - VirusTotal
 - dotnetfiddle
 
+---
 
-##	Question
+## Questions
 
-#### 1 - File->ecorpoffice / What is the PID the malicious file is running under?
+### 1 - File->ecorpoffice / What is the PID the malicious file is running under?
 
-On trouve le profil permettant d'analyser l'image mémoire à l'aide volatility :
+We find the profile allowing to analyze the memory dump using volatility:
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem imageinfo
 ```
 
-Le profil de l'image est `Win7SP1x64`. En utilisant le plugin `pslist`, on peut observer les différents processus.
+The image profile is `Win7SP1x64`. By using the `pslist` plugin, one can observe the different processes.
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 pslist
 ```
 
-`skypeC2autoup`semble suspect. Son PID est **1364**
+`skypeC2autoup` looks suspicious. Its PID is **1364**
 
-**Réponse : 1364**
+**Answer: 1364**
 
 
-#### 2 - File->ecorpoffice / What is the C2 server IP address?
+### 2 - File->ecorpoffice / What is the C2 server IP address?
 
-On réutilise **volatility** avec le plugin **netsacn**
+We reuse **volatility** with the plugin **netsacn**
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 netscan
-``` 
+```
 
-Pour voir les ports ouverts et qui écoute. `skypeC2autoup` établi une connexion avec l'adresse IP **54.174.131.235**
+To see open ports and who is listening. `skypeC2autoup` established a connection with IP address **54.174.131.235**
 
-**Réponse : 54.174.131.235**
+**Answer: 54.174.131.235**
 
-#### 3 - File->ecorpoffice / What is the Teamviewer version abused by the malicious file?
+### 3 - File->ecorpoffice / What is the Teamviewer version abused by the malicious file?
 
-On dump la mémoire du process et on grep à l'endroit où ça parle de l'addresse ip
+We dump the memory of the process and we grep where it talks about the ip address
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 memdump -p 1364 -D ./output
@@ -69,113 +70,111 @@ vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 memdump -p 1364
 strings -a10 -b10 1364.dmp | grep 54.174.131.235
 ```
 
-On peut voir la version de `TeamViewer`.
+We can see the version of `TeamViewer`.
 
-**Réponse : 0.2.2.2**
+**Answer: 0.2.2.2**
 
-#### 4 - File->ecorpoffice / What password did the malicious file use to enable remote access to the system?
+### 4 - File->ecorpoffice / What password did the malicious file use to enable remote access to the system?
 
-Pour cette question, on utilise le plugin `editbox` qui permet de voir les éléments afichés par les boites de dialogue windows.
+For this question, we use the `editbox` plugin which allows you to see the elements displayed by the windows dialog boxes.
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 editbox
 ```
 
-Dans une des boîtes de dialogue, il est affiché le mot de passe utilisé pour lancer le processus.
+In one of the dialog boxes, the password used to launch the process is displayed.
 
-**Réponse : P59fS93m**
+**Answer: P59fS93m**
 
-#### 5 - File->ecorpoffice / What was the sender's email address that delivered the phishing email?
+### 5 - File->ecorpoffice / What was the sender's email address that delivered the phishing email?
 
-Il faut trouver le fichier `Outlook`contenant la boîte mail de l'utilisateur. A l'aide du plugin **filescan**.
+You have to find the `Outlook` file containing the user's mailbox. Using the **filescan** plugin.
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 filescan > output/out.txt
 ```
 
-On récupère l'emplacement du fichier PST en faisant :
+We retrieve the location of the PST file by doing:
 
 ```
 cat output/out.txt | grep -i .pst
 ```
 
-On a l'adresse mémoire du PST et on le dump avec volatility
+We have the memory address of the PST and we dump it with volatility
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 dumpfiles -Q 0x000000007fd38c80 -D=output/
 ```
 
-On l'ouvre dans `OutlookForensicTool`.
+Open it in `OutlookForensicTool`.
 
-**Réponse :  karenmiles@t-online.de**
+**Answer: karenmiles@t-online.de**
 
 
-#### 6 - File->ecorpoffice / What is the MD5 hash of the malicious document?
+### 6 - File->ecorpoffice / What is the MD5 hash of the malicious document?
 
-Dans `OutlookForensicTool`, on télécharge le fichier contenu dans le mail de phishing et on calcule son hash.
+In `OutlookForensicTool`, we download the file contained in the phishing email and calculate its hash.
 
-**Réponse :  c2dbf24a0dc7276a71dd0824647535c9**
+**Answer: c2dbf24a0dc7276a71dd0824647535c9**
 
-#### 7 - File->ecorpoffice / What is the bitcoin wallet address that ransomware was demanded?
+### 7 - File->ecorpoffice / What is the bitcoin wallet address that ransomware was demanded?
 
-Regarder dans les autres mails de la victime. Un des mails contient l'adresse du portefeuille bitcoin.
+Look in the victim's other emails. One of the emails contains the bitcoin wallet address.
 
-**Réponse :   25UMDkGKBe484WSj5Qd8DhK6xkMUzQFydY**
+**Answer: 25UMDkGKBe484WSj5Qd8DhK6xkMUzQFydY**
 
-#### 8 - File->ecorpoffice / What is the ID given to the system by the malicious file for remote access?
+### 8 - File->ecorpoffice / What is the ID given to the system by the malicious file for remote access?
 
-On réutilise `editbox` pour voir les paramètres donnés au malware.
+We reuse `editbox` to see the parameters given to the malware.
 
 ```
 vol.py -f win7ecorpoffice2010-36b02ed3.vmem --profile=Win7SP1x64 editbox
 ```
 
 
-**Réponse : 528 812 561**
+**Answer: 528 812 561**
 
 
-#### 9 - File->ecorpoffice / What is the IPv4 address the actor last connected to the system with the remote access tool?
+### 9 - File->ecorpoffice / What is the IPv4 address the actor last connected to the system with the remote access tool?
 
-On regarde les addresses ip du process puis si elles sont proches de l'utilisation de **TeamViewer**.
+We look at the ip addresses of the process then if they are close to the use of **TeamViewer**.
 
 ```
 strings output/1364.dmp | grep -B 3 -A 2 -E "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | grep teamviewer -B 3 -A 3
 ```
 
-**Réponse :  31.6.13.155**
+**Answer: 31.6.13.155**
 
 
-#### 10 - File->ecorpoffice / What Public Function in the word document returns the full command string that is eventually run on the system?
+### 10 - File->ecorpoffice / What Public Function in the word document returns the full command string that is eventually run on the system?
 
-On récupère le document Word à l'aide de OutlookForensicTool (dans les mails qu'on a précedemment mis dedans).
+We recover the Word document using OutlookForensicTool (in the mails that we previously put in).
 
-L'outil `OfficeMalScanner`permet d'extraire les macros des documents Word. On peut ensuite analyser la macro à l'aide du site : `https://dotnetfiddle.net/`
+The `OfficeMalScanner` tool is used to extract macros from Word documents. We can then analyze the macro using the site: `https://dotnetfiddle.net/`
 
-**Réponse : UsoJar**
+**Answer: UsoJar**
 
-#### 11 - File->ecorpwin7 / What is the MD5 hash of the malicious document?
+### 11 - File->ecorpwin7 / What is the MD5 hash of the malicious document?
 
-On fait comme à la question **5**. On récupère la boîte mail qu'on analyse.
+We do as in question **5**. We recover the mailbox that we analyze.
 
-On voit que la personne reçoit un document appelé : `Important_ECORP_Lawsuit_Washington_Leak.rtf`
+We see that the person receives a document called: `Important_ECORP_Lawsuit_Washington_Leak.rtf`
 
-On se doute qu'il s'agit de ce document qui est suspect. Cependant il semble impossible de l'ouvrir normalement. Il semble corrompu.
+We suspect that it is this document that is suspect. However, it seems impossible to open it normally. It looks corrupt.
 
-De nombreux blocs de bytes nulls ont été ajoutés à la fin du document. Il faut les nettoyer et on obtient le hash du nouveau document.
+Many blocks of null bytes were added at the end of the document. You have to clean them and you get the hash of the new document.
 
-**Réponse :  00e4136876bf4c1069ab9c4fe40ed56f**
+**Answer: 00e4136876bf4c1069ab9c4fe40ed56f**
 
+### 12 - File->ecorpwin7 / What is the common name of the malicious file that gets loaded?"
 
-
-#### 12 - File->ecorpwin7 / What is the common name of the malicious file that gets loaded?"
-
-On liste les commandes passées voir si des choses malicieuses ont été faites :
+We list the orders placed to see if malicious things have been done:
 
 ```
 vol.py -f ecorpwin7-e73257c4.vmem --profile=Win7SP1x64 cmdline
 ```
 
-Il y a deux commandes qui lancent des `test.dll` depuis un chemin suspect. On récupère leurs adresses mémoires à l'aide de `filescan` et on les dump.
+There are two commands that launch `test.dll` from a suspicious path. We retrieve their memory addresses using `filescan` and dump them.
 
 ```
 vol.py -f ecorpwin7-e73257c4.vmem --profile=Win7SP1x64 filescan > output/out2.txt
@@ -185,64 +184,61 @@ vol.py -f ecorpwin7-e73257c4.vmem --profile=Win7SP1x64 filescan > output/out2.tx
 cat output/out2.txt | grep -i test.dll
 ```
 
-On les dump et on les upload sur VirusTotal ce qui donne la réponse.
+We dump them and upload them to VirusTotal which gives the answer.
 
-**Réponse :  PlugX**
+**Answer: PlugX**
 
 
-#### 13 - File->ecorpwin7 / What password does the attacker use to stage the compressed file for exfil?
+### 13 - File->ecorpwin7 / What password does the attacker use to stage the compressed file for exfil?
 
-Ici il faut corréler plusieurs informations pour trouver ce qui semble supect.
+Here it is necessary to correlate several pieces of information to find what seems suspicious.
 
-En utilisant les plugins `cmdline` et `pslist` de **volatility**, il est possible de voir que le processus **conhost.exe** peut être usurpé. (Grand PID et lancé en ligne de commandes)
+Using the **volatility** `cmdline` and `pslist` plugins, it is possible to see that the **conhost.exe** process can be spoofed. (Big PID and run from command line)
 
-On fait alors un dump de la mémoire du processus : 
+We then dump the memory of the process:
 
 ```
 vol.py -f ecorpwin7-e73257c4.vmem --profile=Win7SP1x64 memdump -p 3056 -D output/
 ```
 
-puis on fait un grep voir si cela parle de mot de passe. Le fichier est encodé en **little endian**. Il faut alors utiliser la commande suivante :
+then we do a grep to see if it speaks of a password. The file is encoded in **little endian**. Then use the following command:
 
 ```
 strings -el output/3056.dmp | grep password
 ```
 
-**Réponse : password1234**
+**Answer: password1234**
 
 
-#### 14 - File->ecorpwin7 / What is the IP address of the c2 server for the malicious file?
+### 14 - File->ecorpwin7 / What is the IP address of the c2 server for the malicious file?
 
-On fait un `netscan` pour voir si il y a des connections avec un C2.
+We do a `netscan` to see if there are connections with a C2.
 
 ```
 vol.py -f ecorpwin7-e73257c4.vmem --profile=Win7SP1x64 netscan
 ```
 
-Le process `svchost.exe` établi des connexions avec une adresse IP extérieure
+The `svchost.exe` process establishes connections with an external IP address
 
-**Réponse : 52.90.110.169**
+**Answer: 52.90.110.169**
 
-#### 15 - File->ecorpwin7 / What is the email address that sent the phishing email?
+### 15 - File->ecorpwin7 / What is the email address that sent the phishing email?
 
-On regarde le pst file qu'on a récupéré à la question 11.
+We look at the pst file that we recovered in question 11.
 
-**Réponse : lloydchung@allsafecybersec.com**
+**Answer: lloydchung@allsafecybersec.com**
 
 
-#### 16 - File->ecorpwin7 / What is the name of the deb package the attacker staged to infect the E Coin Servers?
+### 16 - File->ecorpwin7 / What is the name of the deb package the attacker staged to infect the E Coin Servers?
 
-On check les fils de `svchost.exe` à l'aide de `pstree`; 
+We check the children of `svchost.exe` using `pstree`;
 
-on voit que `rundll32.exe` a le pid **2404** et est enfant de `scvhost.exe`. On dump à l'aide de `memdump` rundll32.exe
+we see that `rundll32.exe` has pid **2404** and is a child of `scvhost.exe`. We dump using `memdump` rundll32.exe
 
-On regarde la processus pour voir si il a téléchargé un package  linux.
+We look at the process to see if it has downloaded a linux package.
 
 ```
 strings 2404.dmp | grep wget
 ```
 
-**Réponse : linuxav.deb**
-
-
-
+**Answer: linuxav.deb**

@@ -12,3 +12,6 @@ CyberDefenders writeups made by Robertl and ZarKyo :
 - DumpMe
 - WireDive
 - Ulysses
+- Bucket
+- Insider
+- Redline

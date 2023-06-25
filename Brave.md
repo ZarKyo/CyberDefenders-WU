@@ -11,20 +11,21 @@
  	
 Unzip the challenge (pass: cyberdefenders.org)
 
-Scenario : 
+### Scenario
 
 A memory image was taken from a seized Windows machine. Analyze the image and answer the provided questions.
 
-Tools:
+### Tools
 
 - Volatility 3
 - CertUtil
 - HxD
 
+---
 
-##	Question
+##	Questions
 
-#### 1 - What time was the RAM image acquired according to the suspect system ? (YYYY-MM-DD HH:MM:SS)
+### 1 - What time was the RAM image acquired according to the suspect system ? (YYYY-MM-DD HH:MM:SS)
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.info
@@ -56,7 +57,7 @@ PE TimeDateStamp	Tue Oct 11 07:04:26 1977
 
 **Réponse : 2021-04-30 17:52:19**	
 
-#### 2 - What is the SHA256 hash value of the RAM image ?
+### 2 - What is the SHA256 hash value of the RAM image ?
 
 ```shell
 sha256sum 20210430-Win10Home-20H2-64bit-memdump.mem
@@ -65,7 +66,7 @@ sha256sum 20210430-Win10Home-20H2-64bit-memdump.mem
 
 **Réponse : 9db01b1e7b19a3b2113bfb65e860fffd7a1630bdf2b18613d206ebf2aa0ea172**
 
-#### 3 - What is the process ID of "brave.exe" ?
+### 3 - What is the process ID of "brave.exe" ?
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.pstree
@@ -78,7 +79,7 @@ PID	PPID	ImageFileName	Offset(V)	Threads	Handles	SessionId	Wow64	CreateTime	Exit
 
 **Réponse : 4856**
 
-#### 4 - How many established network connections were there at the time of acquisition ? (number)
+### 4 - How many established network connections were there at the time of acquisition ? (number)
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.netscan | grep ESTABLISHED | wc -l
@@ -87,7 +88,7 @@ sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.netscan | grep EST
 
 **Réponse : 10**
 
-#### 5 - What FQDN does Chrome have an established network connection with ?
+### 5 - What FQDN does Chrome have an established network connection with ?
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.netscan | grep ESTABLISHED
@@ -107,7 +108,7 @@ On remarque que Chrome a établis une connexion avev l'IP **185.70.41.130**, on 
 
 **Réponse : protonmail.ch**
 
-#### 6 - What is the MD5 hash value of process memory for PID 6988 ?
+### 6 - What is the MD5 hash value of process memory for PID 6988 ?
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.pslist --pid 6988 --dump
@@ -125,7 +126,7 @@ sudo md5sum pid.6988.0x1c0000.dmp
 
 **Réponse : 0b493d8e26f03ccd2060e0be85f430af**
 
-#### 7 - What is the word starting at offset 0x45BE876 with a length of 6 bytes ?
+### 7 - What is the word starting at offset 0x45BE876 with a length of 6 bytes ?
 
 Avec Ghex, on ouvre le fichier mémoire et on va à l'offset 0x45BE876 `Edit > Goto Byte > 0x45BE876`
 
@@ -133,7 +134,7 @@ Avec Ghex, on ouvre le fichier mémoire et on va à l'offset 0x45BE876 `Edit > G
 
 **Réponse : hacker**
 
-#### 8 - What is the creation date and time of the parent process of "powershell.exe" ? (YYYY-MM-DD HH:MM:SS)
+### 8 - What is the creation date and time of the parent process of "powershell.exe" ? (YYYY-MM-DD HH:MM:SS)
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.pstree | grep -i -B 5 powershell.exe > pstree_powsershell.txt
@@ -149,7 +150,7 @@ cat pstree_powsershell.txt
 
 **Réponse : 2021-04-30 17:39:48**
 
-#### 9 - What is the full path and name of the last file opened in notepad ?
+### 9 - What is the full path and name of the last file opened in notepad ?
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.cmdline | grep notepad > notepad.txt
@@ -160,7 +161,7 @@ cat notepad.txt
 
 **Réponse : C:\Users\JOHNDO~1\AppData\Local\Temp\7zO4FB31F24\accountNum**
 
-#### 10 - How long did the suspect use Brave browser ? (hh:mm:ss)
+### 10 - How long did the suspect use Brave browser ? (hh:mm:ss)
 
 ```shell
 sudo vol -f 20210430-Win10Home-20H2-64bit-memdump.mem windows.registry.userassist > userassist.log 

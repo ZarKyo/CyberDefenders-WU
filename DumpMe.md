@@ -9,28 +9,29 @@
 - Size : 1.2 GB
 - Tags : Volatility DFIR Windows Memory 
 
-Scenario :
+### Scenario
 
 One of the SOC analysts took a memory dump from a machine infected with a meterpreter malware. As a Digital Forensicators, your job is to analyze the dump, extract the available indicators of compromise (IOCs) and answer the provided questions.
 
-Tools :
+### Tools
 
 - Volatility 2
 - sha1sum
 
+---
 
-## Question
+## Questions
 
-#### 1 - What is the SHA1 hash of Triage-Memory.mem (memory dump) ?
+### 1 - What is the SHA1 hash of Triage-Memory.mem (memory dump) ?
 
 ```shell
 sha1sum Triage-Memory.mem 
 c95e8cc8c946f95a109ea8e47a6800de10a27abd  Triage-Memory.mem
 ```
 
-**Réponse : c95e8cc8c946f95a109ea8e47a6800de10a27abd**
+**Answer : c95e8cc8c946f95a109ea8e47a6800de10a27abd**
 
-#### 2 - What volatility profile is the most appropriate for this machine ? (ex: Win10x86_14393)
+### 2 - What volatility profile is the most appropriate for this machine ? (ex: Win10x86_14393)
 
 ```shell
 vol.py -f Triage-Memory.mem imageinfo
@@ -53,9 +54,9 @@ INFO    : volatility.debug    : Determining profile based on KDBG search...
      Image local date and time : 2019-03-22 01:46:00 -0400
 ```
 
-**Réponse : Win7SP1x64**
+**Answer : Win7SP1x64**
 
-#### 3 - What was the process ID of notepad.exe ?
+### 3 - What was the process ID of notepad.exe ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 pstree
@@ -131,9 +132,9 @@ Name                                                  Pid   PPid   Thds   Hnds T
  0xfffffa8005be12c0:FileZilla Serv                   1996   1860      3     99 2019-03-22 05:32:12 UTC+0000
 ```
 
-**Réponse : 3032**
+**Answer : 3032**
 
-#### 4 - Name the child process of wscript.exe.
+### 4 - Name the child process of wscript.exe.
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 pstree
@@ -156,9 +157,9 @@ Name                                                  Pid   PPid   Thds   Hnds T
 [...]
 ```
 
-**Réponse : UWkpjFjDzM.exe**
+**Answer : UWkpjFjDzM.exe**
 
-#### 5 - What was the IP address of the machine at the time the RAM dump was created ?
+### 5 - What was the IP address of the machine at the time the RAM dump was created ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 netscan
@@ -169,9 +170,9 @@ Offset(P)          Proto    Local Address                  Foreign Address      
 [...]
 ```
 
-**Réponse : 10.0.0.101**
+**Answer : 10.0.0.101**
 
-#### 6 - Based on the answer regarding the infected PID, can you determine the IP of the attacker ?
+### 6 - Based on the answer regarding the infected PID, can you determine the IP of the attacker ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 netscan | grep UWkpjFjDzM.exe
@@ -180,9 +181,9 @@ Volatility Foundation Volatility Framework 2.6.1
 0x13e397190        TCPv4    10.0.0.101:49217               10.0.0.106:4444      ESTABLISHED      3496     UWkpjFjDzM.exe 
 ```
 
-**Réponse : 10.0.0.106**
+**Answer : 10.0.0.106**
 
-#### 7 - How many processes are associated with VCRUNTIME140.dll ?
+### 7 - How many processes are associated with VCRUNTIME140.dll ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 dlllist | grep -i VCRUNTIME140.dll | wc -l
@@ -191,9 +192,9 @@ Volatility Foundation Volatility Framework 2.6.1
 5
 ```
 
-**Réponse : 5**
+**Answer : 5**
 
-#### 8 - After dumping the infected process, what is its md5 hash ?
+### 8 - After dumping the infected process, what is its md5 hash ?
 	
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 procdump -p 3496 -D .
@@ -209,9 +210,9 @@ md5sum executable.3496.exe
 690ea20bc3bdfb328e23005d9a80c290  executable.3496.exe
 ```
 
-**Réponse : 690ea20bc3bdfb328e23005d9a80c290**
+**Answer : 690ea20bc3bdfb328e23005d9a80c290**
 
-#### 9 - What is the LM hash of Bob's account ?
+### 9 - What is the LM hash of Bob's account ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 hashdump
@@ -222,9 +223,9 @@ Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
 Bob:1000:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
 ```
 
-**Réponse : aad3b435b51404eeaad3b435b51404ee**
+**Answer : aad3b435b51404eeaad3b435b51404ee**
 
-#### 10 - What memory protection constants does the VAD node at 0xfffffa800577ba10 have ?
+### 10 - What memory protection constants does the VAD node at 0xfffffa800577ba10 have ?
 
 VAD = Virtual address descriptors
 
@@ -240,9 +241,9 @@ ControlArea @fffffa8005687a50 Segment fffff8a000c4f870
 NumberOfSectionReferences:          1 NumberOfPfnReferences:           0
 ```
 
-**Réponse : PAGE_READONLY**
+**Answer : PAGE_READONLY**
 
-#### 11 - What memory protection did the VAD starting at 0x00000000033c0000 and ending at 0x00000000033dffff have ?
+### 11 - What memory protection did the VAD starting at 0x00000000033c0000 and ending at 0x00000000033dffff have ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 vadinfo | grep -i -A5 "0x00000000033c0000 end 0x00000000033dffff"
@@ -254,9 +255,9 @@ Protection: PAGE_NOACCESS
 Vad Type: VadNone
 ```
 
-**Réponse : PAGE_NOACCES**
+**Answer : PAGE_NOACCES**
 
-#### 12 - There was a VBS script that ran on the machine. What is the name of the script ? (submit without file extension)
+### 12 - There was a VBS script that ran on the machine. What is the name of the script ? (submit without file extension)
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 cmdline | grep .vbs
@@ -265,9 +266,9 @@ Volatility Foundation Volatility Framework 2.6.1
 Command line : "C:\Windows\System32\wscript.exe" //B //NOLOGO %TEMP%\vhjReUDEuumrX.vbs
 ```
 
-**Réponse : vhjReUDEuumrX**
+**Answer : vhjReUDEuumrX**
 
-#### 13 - An application was run at 2019-03-07 23:06:58 UTC. What is the name of the program ? (Include extension)
+### 13 - An application was run at 2019-03-07 23:06:58 UTC. What is the name of the program ? (Include extension)
 	
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 shimcache | grep "2019-03-07 23:06:58 UTC"
@@ -277,9 +278,9 @@ Volatility Foundation Volatility Framework 2.6.1
 2019-03-07 23:06:58 UTC+0000   \??\C:\Program Files (x86)\Microsoft\Skype for Desktop\Skype.exe
 ```
 
-**Réponse : Skype.exe**
+**Answer : Skype.exe**
 
-#### 14 - What was written in notepad.exe at the time when the memory dump was captured ?
+### 14 - What was written in notepad.exe at the time when the memory dump was captured ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 memdump -p 3032 -D .
@@ -294,9 +295,9 @@ strings -el 3032.dmp | grep "flag<"
 flag<REDBULL_IS_LIFE>
 ```
 
-**Réponse : flag<REDBULL_IS_LIFE>**
+**Answer : flag<REDBULL_IS_LIFE>**
 
-#### 15 - What is the short name of the file at file record 59045 ?
+### 15 - What is the short name of the file at file record 59045 ?
 
 ```shell
 vol.py -f Triage-Memory.mem --profile=Win7SP1x64 mftparser | grep -A15 -B10 "59045"
@@ -357,8 +358,8 @@ $FILE_NAME
 Creation                       Modified                       MFT Altered                    Access Date                    Name/Path
 ```
 
-**Réponse : EMPLOY~1.XLS**
+**Answer : EMPLOY~1.XLS**
 
-#### 16 - This box was exploited and is running meterpreter. What was the infected PID ?
+### 16 - This box was exploited and is running meterpreter. What was the infected PID ?
 
-**Réponse : 3496**
+**Answer : 3496**
