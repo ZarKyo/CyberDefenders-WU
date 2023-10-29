@@ -1,16 +1,3 @@
----
-title: "Cyberdefenders - HawkEye"
-date: 2022-10-29T23:08:51+02:00
-draft: false
-description: "Cyberdefenders - HawkEye writeup"
-author: "ZarKyo"
-authorLink: "https://zarkyo.fr/"
-featuredImage: "/cyberdefenders/logo-baniere.png"
-featuredImagePreview: "/cyberdefenders/logo-baniere.png"
-tags: ["CYBERDEFENDERS","FORENSIC"]
-categories: ["writeups","cyberdefenders"]
----
-
 # HawkEye
 
 ## Info

@@ -5,7 +5,7 @@ CyberDefenders writeups made by Robertl and ZarKyo :
 - DetectLog4j
 - HawkEye
 - Team Spy
-- l337 S4auce
+- l337 S4uc3
 - Seized
 - MrRobot
 - Brave
@@ -15,3 +15,8 @@ CyberDefenders writeups made by Robertl and ZarKyo :
 - Bucket
 - Insider
 - Redline
+- EscapeRoom
+- Hammered
+- Szechuan Sauce
+- The Crime
+- Tomcat Takeover
